@@ -56,13 +56,13 @@ public:
    * @brief Constructor from PopupMenu
    *
    * @param menu_pos Position of the popup
-   * @param parent_window Pointer to original popup, if it is the original popup
-   * then use nullptr
    * @param width Width of the popup
    * @param max_height Max height of the popup
+   * @param parent_window Pointer to original popup, if it is the original popup
+   * then use nullptr
    */
-  PopupMenu(Position menu_pos, SDL_Window *parent_window, int width,
-            int max_height);
+  PopupMenu(Position menu_pos, int width, int max_height,
+            SDL_Window *parent_window = nullptr);
 
   /*
    * @brief Destructor from PopupMenu

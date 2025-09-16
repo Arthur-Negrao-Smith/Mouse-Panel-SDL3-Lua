@@ -64,10 +64,10 @@ bool PopupMenu::render() {
   return true;
 }
 
-PopupMenu::PopupMenu(Position menu_pos, SDL_Window *parent_window, int width,
-                     int max_height)
-    : menu_position(menu_pos), parent_window(parent_window),
-      default_width(width), max_height(max_height) {}
+PopupMenu::PopupMenu(Position menu_pos, int width, int max_height,
+                     SDL_Window *parent_window)
+    : menu_position(menu_pos), default_width(width), max_height(max_height),
+      parent_window(parent_window) {}
 
 PopupMenu::~PopupMenu() {
   this->buttons.clear();
