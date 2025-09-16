@@ -1,8 +1,10 @@
 #include "popup_menu.hpp"
 #include "button.hpp"
 #include "utils.hpp"
+
 #include <SDL3/SDL.h>
 #include <iostream>
+#include <memory>
 #include <string>
 
 bool PopupMenu::create_window(int offset_x, int offset_y) {
@@ -37,6 +39,27 @@ bool PopupMenu::create_window(int offset_x, int offset_y) {
     std::cerr << "Erro: Erro to create a Menu render" << std::endl;
     return false;
   }
+
+  return true;
+}
+
+bool PopupMenu::add_button(std::string label, Color font_color,
+                           std::string function) {
+  auto btn = std::make_shared<Button>(new Button(label, font_color, function));
+
+  if (!btn) {
+    std::cerr << "Erro: Erro to create a Button" << std::endl;
+    return false;
+  }
+
+  buttons.push_back(btn);
+
+  return true;
+}
+
+bool PopupMenu::render() {
+  if (!this->current_window || !this->renderer)
+    return false;
 
   return true;
 }
