@@ -6,7 +6,7 @@
 #include <SDL3/SDL.h>
 #include <string>
 
-class Button {
+typedef struct Button {
 public:
   std::string label;
   Color font_color;
@@ -14,6 +14,6 @@ public:
   SDL_Rect rect;
 
   Button(std::string label, Color font_color, std::string function);
-};
+} Button;
 
 #endif
