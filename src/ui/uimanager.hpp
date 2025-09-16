@@ -6,9 +6,6 @@
 
 #include <SDL3/SDL.h>
 
-#define DEFAULT_WIDTH_POPUP 200
-#define DEFAULT_HEIGHT_POPUP 400
-
 class UIManager {
 private:
   /// Vector with popup menus
