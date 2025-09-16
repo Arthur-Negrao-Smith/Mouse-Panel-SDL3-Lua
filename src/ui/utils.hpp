@@ -7,6 +7,8 @@ File with util structures
 
 #include <cstdint>
 
+#define APP_NAME "Mouse Panel"
+
 typedef struct {
   int x, y;
 
