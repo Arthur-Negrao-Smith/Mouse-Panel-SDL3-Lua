@@ -83,7 +83,16 @@ public:
    * @throw std::invalid_argument if the first element isn't "#"
    * @throw std::out_of_range if number is to big hexadecimal
    */
-  static Color fromHex(const std::string &hex);
+  static Color hex_to_color(const std::string &hex);
+
+  /*
+   * @brief Convert Color to string
+   *
+   * @param color Color to convert to a string
+   *
+   * @return The respective string
+   */
+  static std::string color_to_hex(const Color &color);
 };
 
 #endif

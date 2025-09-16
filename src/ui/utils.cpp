@@ -1,10 +1,11 @@
 #include "utils.hpp"
 
 #include <cstdint>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
-Color ColorUtils::fromHex(const std::string &hex) {
+Color ColorUtils::hex_to_color(const std::string &hex) {
   // if isn't "#RRGGBB" or "#RRGGBBAA"
   if (hex.size() != 7 && hex.size() != 9) {
     throw std::invalid_argument(
@@ -29,4 +30,11 @@ Color ColorUtils::fromHex(const std::string &hex) {
     alpha = hex_to_byte(hex.substr(7, 2));
 
   return {r, g, b, alpha};
+}
+
+std::string ColorUtils::color_to_hex(const Color &color) {
+  std::stringstream temp_color;
+  temp_color << color.r << color.g << color.b << color.alpha;
+
+  return temp_color.str();
 }
