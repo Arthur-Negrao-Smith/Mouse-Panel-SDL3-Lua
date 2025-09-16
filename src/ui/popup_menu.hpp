@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 #include <SDL3/SDL.h>
-#include <string>
+#include <memory>
 #include <vector>
 
 class PopupMenu {
@@ -14,19 +14,17 @@ private:
   const unsigned default_width;
 
 public:
-  std::vector<Button *> buttons;
+  std::vector<std::shared_ptr<Button>> buttons;
   Position menu_position;
   SDL_Renderer *renderer;
-  SDL_Window *current_window;
+  SDL_Window *current_window = nullptr;
   SDL_Window *parent_window;
 
-  void add_button(Button new_button);
-  PopupMenu(Position menu_pos, SDL_Window *parent_window, unsigned width,
-            unsigned max_height);
+  bool create_window(int offset_x, int offset_y);
+  bool add_button(Button new_button);
+  PopupMenu(Position menu_pos, SDL_Window *parent_window, int width,
+            int max_height);
   ~PopupMenu();
 };
-
-Button *create_button(std::string label, Color font_color,
-                      std::string function);
 
 #endif
