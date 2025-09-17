@@ -14,9 +14,9 @@ File with util structures
 #define APP_NAME "Mouse Panel"
 
 /*
- * @brief Constant to compare color selected
+ * @brief Constant to define the default color
  */
-#define DEFAULT_BUTTON_FONT_COLOR "default"
+#define DEFAULT_COLOR_TEXT "default"
 
 /*
  * @brief Constant to define default button height

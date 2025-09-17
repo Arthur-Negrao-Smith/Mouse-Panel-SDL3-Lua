@@ -34,7 +34,7 @@ Color ColorUtils::hex_to_color(const std::string &hex) {
 
 std::string ColorUtils::color_to_hex(const Color &color) {
   std::stringstream temp_color;
-  temp_color << color.r << color.g << color.b << color.alpha;
+  temp_color << '#' << color.r << color.g << color.b << color.alpha;
 
   return temp_color.str();
 }
