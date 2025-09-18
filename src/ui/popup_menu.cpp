@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 bool PopupMenu::create_window(int offset_x, int offset_y) {
@@ -43,14 +44,50 @@ bool PopupMenu::create_window(int offset_x, int offset_y) {
   return true;
 }
 
+void PopupMenu::calculate_current_height() {
+  int temp_height = this->buttons.size() * this->button_height;
+
+  // if the new height not overflowing
+  if (temp_height < this->max_height)
+    this->current_height = temp_height;
+}
+
+void PopupMenu::calculate_buttons_position() {
+  if (this->buttons.size() == 0)
+    throw std::runtime_error("No buttons in menu");
+
+  // if buttons don't fit in the window
+  if (this->buttons.size() * this->button_height > this->max_height) {
+    int number_to_remove =
+        this->buttons.size() -
+        static_cast<int>(this->max_height / this->button_height);
+
+    // remove overflowed buttons
+    for (int i = 0; i < number_to_remove; i++)
+      this->buttons.pop_back();
+  }
+
+  // calculate the buttons positions
+  Position current_position{0, 0};
+  for (auto btn : this->buttons) {
+    btn->rect.x = current_position.x;
+    btn->rect.y = current_position.y;
+
+    current_position.y += button_height;
+  }
+}
+
 bool PopupMenu::add_button(std::string label, Color font_color,
                            std::string function) {
-  auto btn = std::make_shared<Button>(new Button(label, font_color, function));
+  auto btn = std::make_shared<Button>(label, font_color, function);
 
   if (!btn) {
     std::cerr << "Erro: Erro to create a Button" << std::endl;
     return false;
   }
+
+  // to recalculate the buttons positions
+  this->pre_rendered = false;
 
   buttons.push_back(btn);
 
@@ -61,20 +98,27 @@ bool PopupMenu::render() {
   if (!this->current_window || !this->renderer)
     return false;
 
+  if (!this->pre_rendered) {
+    calculate_current_height();
+    calculate_buttons_position();
+
+    this->pre_rendered = true;
+  }
+
   return true;
 }
 
 PopupMenu::PopupMenu(Position menu_pos, int width, int max_height,
-                     SDL_Window *parent_window)
+                     SDL_Window *parent_window, int button_height)
     : menu_position(menu_pos), default_width(width), max_height(max_height),
-      parent_window(parent_window) {}
+      parent_window(parent_window), button_height(button_height) {}
 
 PopupMenu::~PopupMenu() {
   this->buttons.clear();
 
-  if (!this->current_window)
+  if (this->current_window)
     SDL_DestroyWindow(this->current_window);
 
-  if (!this->renderer)
+  if (this->renderer)
     SDL_DestroyRenderer(this->renderer);
 }

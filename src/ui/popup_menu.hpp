@@ -8,14 +8,29 @@
 #include <memory>
 #include <vector>
 
+/*
+ * @class PopMenu
+ *
+ * @brief Class to represent a popup menu window
+ */
 class PopupMenu {
 private:
-  const int max_height;
-  const int default_width;
-  int current_height;
+  const int max_height;    ///< Const to represent the max height of the menu
+  const int default_width; ///< Const with the width of the window
+  const int button_height;
+  int current_height; ///< Variable to keep the current menu height
+  bool pre_rendered =
+      false; ///< Variable to avoid recalculate buttons positions
 
-  void calculate_buttons_position();
+  /*
+   * @brief Calculate the current height of the window using the button height
+   */
   void calculate_current_height();
+
+  /*
+   * @brief Calculate the buttons position on window using the current height
+   */
+  void calculate_buttons_position();
 
 public:
   std::vector<std::shared_ptr<Button>> buttons;
@@ -62,7 +77,8 @@ public:
    * then use nullptr
    */
   PopupMenu(Position menu_pos, int width, int max_height,
-            SDL_Window *parent_window = nullptr);
+            SDL_Window *parent_window = nullptr,
+            int button_height = DEFAULT_BUTTON_HEIGHT);
 
   /*
    * @brief Destructor from PopupMenu
