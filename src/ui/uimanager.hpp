@@ -5,11 +5,12 @@
 #include "utils.hpp"
 
 #include <SDL3/SDL.h>
+#include <memory>
 
 class UIManager {
 private:
   /// Vector with popup menus
-  std::vector<PopupMenu *> popups;
+  std::vector<std::shared_ptr<PopupMenu>> popups;
 
   /*
    * @brief Get the screen resolution
@@ -26,7 +27,7 @@ public:
    * @brief Add a top popup menu
    * * If the first menu is it, then the menu will be a owner of main window
    */
-  void push_popup(PopupMenu *new_popup);
+  void push_popup(std::shared_ptr<PopupMenu> new_popup);
 
   /**
    * @brief Remove the top popup menu

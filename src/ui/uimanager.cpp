@@ -29,22 +29,15 @@ UIManager::UIManager(Color menu_bg, Color btn_hover, Color btn_focused,
 }
 
 UIManager::~UIManager() {
-  for (auto &current_popup : this->popups) {
-    current_popup->~PopupMenu();
-    delete current_popup;
-  }
+  this->popups.clear();
   SDL_Quit();
 }
 
-void UIManager::push_popup(PopupMenu *new_popup) {
+void UIManager::push_popup(std::shared_ptr<PopupMenu> new_popup) {
   this->popups.push_back(new_popup);
 }
 
 void UIManager::pop_popup() {
-  PopupMenu *current_popup = popups.back();
-
-  if (current_popup)
-    current_popup->~PopupMenu();
-
-  this->popups.pop_back();
+  if (!this->popups.empty())
+    this->popups.pop_back();
 }
