@@ -43,7 +43,7 @@ public:
   /*
    * @brief Vector with all buttons
    */
-  std::vector<std::shared_ptr<Button>> buttons;
+  std::vector<std::unique_ptr<Button>> buttons;
 
   /*
    * @brief Struct with the window position

@@ -33,7 +33,7 @@ void PopupMenu::calculate_buttons_position() {
 
   // calculate the buttons positions
   Position current_position{0, 0};
-  for (auto btn : this->buttons) {
+  for (const auto &btn : this->buttons) {
     btn->rect.x = current_position.x;
     btn->rect.y = current_position.y;
 
@@ -43,7 +43,7 @@ void PopupMenu::calculate_buttons_position() {
 
 bool PopupMenu::add_button(std::string label, Color font_color,
                            std::string function) {
-  auto btn = std::make_shared<Button>(label, font_color, function);
+  auto btn = std::make_unique<Button>(label, font_color, function);
 
   if (!btn) {
     std::cerr << "Erro: Erro to create a Button" << std::endl;
@@ -53,7 +53,7 @@ bool PopupMenu::add_button(std::string label, Color font_color,
   // to recalculate the buttons positions
   this->pre_rendered = false;
 
-  buttons.push_back(btn);
+  buttons.push_back(std::move(btn));
 
   return true;
 }
@@ -87,6 +87,7 @@ PopupMenu::PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
                      int button_height)
     : menu_position(menu_pos), width(width), max_height(max_height),
       parent_window(parent_popup), button_height(button_height),
+      // init the renderer like a nullptr
       renderer(nullptr, &SDL_DestroyRenderer) {
 
   // if the function already used
@@ -120,4 +121,4 @@ PopupMenu::PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
   this->renderer.reset(temp_renderer);
 }
 
-PopupMenu::~PopupMenu() { this->buttons.clear(); }
+PopupMenu::~PopupMenu() = default;
