@@ -8,42 +8,6 @@
 #include <stdexcept>
 #include <string>
 
-bool PopupMenu::create_window(int offset_x, int offset_y) {
-
-  // if the function already used
-  if (this->current_window != nullptr) {
-    std::cerr << "Erro: Window already created" << std::endl;
-    return false;
-  }
-
-  if (this->parent_window == nullptr) {
-    this->current_window =
-        SDL_CreateWindow(APP_NAME, this->default_width, this->max_height,
-                         SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALWAYS_ON_TOP);
-  } else {
-    this->current_window =
-        SDL_CreatePopupWindow(this->parent_window, offset_x, offset_y,
-                              this->default_width, this->max_height,
-                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_POPUP_MENU |
-                                  SDL_WINDOW_ALWAYS_ON_TOP);
-  }
-
-  if (!this->current_window) {
-    std::cerr << "Erro: Erro to create a Menu window" << std::endl;
-    return false;
-  }
-
-  SDL_CreateRenderer(this->current_window, nullptr);
-  if (!this->renderer) {
-    SDL_DestroyWindow(this->current_window);
-
-    std::cerr << "Erro: Erro to create a Menu render" << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
 void PopupMenu::calculate_current_height() {
   int temp_height = this->buttons.size() * this->button_height;
 
@@ -95,12 +59,22 @@ bool PopupMenu::add_button(std::string label, Color font_color,
 }
 
 bool PopupMenu::render() {
-  if (!this->current_window || !this->renderer)
+  if (!this->current_window || !this->renderer) {
+    std::cerr << "Erro: Window or Renderer don't exist." << std::endl;
     return false;
+  }
 
   if (!this->pre_rendered) {
     calculate_current_height();
-    calculate_buttons_position();
+
+    try {
+      calculate_buttons_position();
+
+    } catch (std::runtime_error NoButtonsError) {
+      std::cerr << "Erro: Don't have buttons to calculate they positions."
+                << std::endl;
+      return false;
+    }
 
     this->pre_rendered = true;
   }
@@ -108,10 +82,38 @@ bool PopupMenu::render() {
   return true;
 }
 
-PopupMenu::PopupMenu(Position menu_pos, int width, int max_height,
-                     SDL_Window *parent_window, int button_height)
-    : menu_position(menu_pos), default_width(width), max_height(max_height),
-      parent_window(parent_window), button_height(button_height) {}
+PopupMenu::PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
+                     int offset_y, SDL_Window *parent_window, int button_height)
+    : menu_position(menu_pos), width(width), max_height(max_height),
+      parent_window(parent_window), button_height(button_height) {
+
+  // if the function already used
+  if (this->current_window != nullptr) {
+    throw std::runtime_error("Window already created");
+  }
+
+  if (this->parent_window == nullptr) {
+    this->current_window =
+        SDL_CreateWindow(APP_NAME, this->width, this->max_height,
+                         SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALWAYS_ON_TOP);
+  } else {
+    this->current_window = SDL_CreatePopupWindow(
+        this->parent_window, offset_x, offset_y, this->width, this->max_height,
+        SDL_WINDOW_BORDERLESS | SDL_WINDOW_POPUP_MENU |
+            SDL_WINDOW_ALWAYS_ON_TOP);
+  }
+
+  if (!this->current_window) {
+    throw std::runtime_error("Erro to create a Menu window");
+  }
+
+  this->renderer = SDL_CreateRenderer(this->current_window, nullptr);
+  if (!this->renderer) {
+    SDL_DestroyWindow(this->current_window);
+
+    throw std::runtime_error("Erro to create a Menu renderer");
+  }
+}
 
 PopupMenu::~PopupMenu() {
   this->buttons.clear();

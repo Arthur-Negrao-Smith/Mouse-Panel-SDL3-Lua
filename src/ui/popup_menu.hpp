@@ -5,8 +5,13 @@
 #include "utils.hpp"
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
 #include <memory>
 #include <vector>
+
+using WindowPtr = std::shared_ptr<SDL_Window>;
+using RendererPtr =
+    std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)>;
 
 /*
  * @class PopMenu
@@ -15,8 +20,8 @@
  */
 class PopupMenu {
 private:
-  const int max_height;    ///< Const to represent the max height of the menu
-  const int default_width; ///< Const with the width of the window
+  const int max_height; ///< Const to represent the max height of the menu
+  const int width;      ///< Const with the width of the window
   const int button_height;
   int current_height; ///< Variable to keep the current menu height
   bool pre_rendered =
@@ -29,6 +34,8 @@ private:
 
   /*
    * @brief Calculate the buttons position on window using the current height
+   *
+   * @throw Throw the std::runtime_error if the window don't have buttons
    */
   void calculate_buttons_position();
 
@@ -38,16 +45,6 @@ public:
   SDL_Renderer *renderer;
   SDL_Window *current_window = nullptr;
   SDL_Window *parent_window;
-
-  /*
-   * @brief Create a window to popup
-   *
-   * @param offset_x Offset of X axle from original popup
-   * @param offset_y Offset of Y axle from original popup
-   *
-   * @return Return true if was success, else, return false
-   */
-  bool create_window(int offset_x, int offset_y);
 
   /*
    * @brief Add a button to popup
@@ -68,16 +65,22 @@ public:
   bool render();
 
   /*
-   * @brief Constructor from PopupMenu
+   * @brief Constructor from PopupMenu.
    *
-   * @param menu_pos Position of the popup
-   * @param width Width of the popup
-   * @param max_height Max height of the popup
+   * @param menu_pos Position of the popup.
+   * @param width Width of the popup.
+   * @param max_height Max height of the popup.
    * @param parent_window Pointer to original popup, if it is the original popup
-   * then use nullptr
+   * the pointer is nullptr.
+   * @param button_height Height of each button, if don't passed any button.
+   * height, then default height is choiced then use nullptr.
+   *
+   * @throw Throw the std::runtime_error if the window already exists.
+   * @throw Throw the std::runtime_error if the window can't be created.
+   * @throw Throw the std::runtime_error if the renderer can't be created.
    */
-  PopupMenu(Position menu_pos, int width, int max_height,
-            SDL_Window *parent_window = nullptr,
+  PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
+            int offset_y, SDL_Window *parent_window = nullptr,
             int button_height = DEFAULT_BUTTON_HEIGHT);
 
   /*
