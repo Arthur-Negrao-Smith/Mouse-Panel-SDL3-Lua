@@ -1,11 +1,12 @@
 #include "utils.hpp"
 
+#include <SDL3/SDL.h>
 #include <cstdint>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
-Color ColorUtils::hex_to_color(const std::string &hex) {
+SDL_Color ColorUtils::hex_to_color(const std::string &hex) {
   // if isn't "#RRGGBB" or "#RRGGBBAA"
   if (hex.size() != 7 && hex.size() != 9) {
     throw std::invalid_argument(
@@ -32,9 +33,9 @@ Color ColorUtils::hex_to_color(const std::string &hex) {
   return {r, g, b, alpha};
 }
 
-std::string ColorUtils::color_to_hex(const Color &color) {
+std::string ColorUtils::color_to_hex(const SDL_Color &color) {
   std::stringstream temp_color;
-  temp_color << '#' << color.r << color.g << color.b << color.alpha;
+  temp_color << '#' << color.r << color.g << color.b << color.a;
 
   return temp_color.str();
 }

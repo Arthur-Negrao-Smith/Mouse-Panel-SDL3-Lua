@@ -5,6 +5,7 @@ File with util structures
 #ifndef UTILS_PAANEL_SDL3_LUA
 #define UTILS_PAANEL_SDL3_LUA
 
+#include <SDL3/SDL.h>
 #include <cstdint>
 #include <string>
 
@@ -39,8 +40,8 @@ File with util structures
  * @brief Struct to keep a position
  */
 struct Position {
-  int x; ///< X coordinate
-  int y; ///< Y coordinate
+  float x; ///< X coordinate
+  float y; ///< Y coordinate
 };
 
 /*
@@ -51,18 +52,6 @@ struct Position {
 struct Geometry {
   int width;  ///< width of the element
   int height; ///< height of the element
-};
-
-/*
- * @struct Color
- *
- * @brief Struct to keep colors
- */
-struct Color {
-  uint8_t r;     ///< Red number
-  uint8_t g;     ///< Green number
-  uint8_t b;     ///< Blue number
-  uint8_t alpha; ///< Alpha number
 };
 
 /*
@@ -83,7 +72,7 @@ public:
    * @throw std::invalid_argument if the first element isn't "#"
    * @throw std::out_of_range if number is to big hexadecimal
    */
-  static Color hex_to_color(const std::string &hex);
+  static SDL_Color hex_to_color(const std::string &hex);
 
   /*
    * @brief Convert Color to string
@@ -92,7 +81,7 @@ public:
    *
    * @return The respective string
    */
-  static std::string color_to_hex(const Color &color);
+  static std::string color_to_hex(const SDL_Color &color);
 };
 
 #endif
