@@ -83,44 +83,41 @@ bool PopupMenu::render() {
 }
 
 PopupMenu::PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
-                     int offset_y, SDL_Window *parent_window, int button_height)
+                     int offset_y, std::shared_ptr<PopupMenu> parent_popup,
+                     int button_height)
     : menu_position(menu_pos), width(width), max_height(max_height),
-      parent_window(parent_window), button_height(button_height) {
+      parent_window(parent_popup), button_height(button_height),
+      renderer(nullptr, &SDL_DestroyRenderer) {
 
   // if the function already used
   if (this->current_window != nullptr) {
     throw std::runtime_error("Window already created");
   }
 
-  if (this->parent_window == nullptr) {
-    this->current_window =
+  SDL_Window *temp_window;
+  if (parent_popup == nullptr) {
+    temp_window =
         SDL_CreateWindow(APP_NAME, this->width, this->max_height,
                          SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALWAYS_ON_TOP);
   } else {
-    this->current_window = SDL_CreatePopupWindow(
-        this->parent_window, offset_x, offset_y, this->width, this->max_height,
-        SDL_WINDOW_BORDERLESS | SDL_WINDOW_POPUP_MENU |
-            SDL_WINDOW_ALWAYS_ON_TOP);
+    temp_window =
+        SDL_CreatePopupWindow(parent_popup->current_window.get(), offset_x,
+                              offset_y, this->width, this->max_height,
+                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_POPUP_MENU |
+                                  SDL_WINDOW_ALWAYS_ON_TOP);
   }
 
-  if (!this->current_window) {
+  if (!temp_window) {
     throw std::runtime_error("Erro to create a Menu window");
   }
+  this->current_window = WindowPtr(temp_window, &SDL_DestroyWindow);
 
-  this->renderer = SDL_CreateRenderer(this->current_window, nullptr);
-  if (!this->renderer) {
-    SDL_DestroyWindow(this->current_window);
-
+  SDL_Renderer *temp_renderer =
+      SDL_CreateRenderer(this->current_window.get(), nullptr);
+  if (!temp_renderer) {
     throw std::runtime_error("Erro to create a Menu renderer");
   }
+  this->renderer.reset(temp_renderer);
 }
 
-PopupMenu::~PopupMenu() {
-  this->buttons.clear();
-
-  if (this->current_window)
-    SDL_DestroyWindow(this->current_window);
-
-  if (this->renderer)
-    SDL_DestroyRenderer(this->renderer);
-}
+PopupMenu::~PopupMenu() { this->buttons.clear(); }

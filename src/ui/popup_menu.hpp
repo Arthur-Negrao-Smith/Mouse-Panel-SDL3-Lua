@@ -40,11 +40,30 @@ private:
   void calculate_buttons_position();
 
 public:
+  /*
+   * @brief Vector with all buttons
+   */
   std::vector<std::shared_ptr<Button>> buttons;
+
+  /*
+   * @brief Struct with the window position
+   */
   Position menu_position;
-  SDL_Renderer *renderer;
-  SDL_Window *current_window = nullptr;
-  SDL_Window *parent_window;
+
+  /*
+   * @brief Smart pointer to represent the renderer
+   */
+  RendererPtr renderer;
+
+  /*
+   * @brief Smart pointer to represente the current window
+   */
+  WindowPtr current_window = nullptr;
+
+  /*
+   * @brief Weak reference to represent the parent_window
+   */
+  std::weak_ptr<PopupMenu> parent_window;
 
   /*
    * @brief Add a button to popup
@@ -70,8 +89,8 @@ public:
    * @param menu_pos Position of the popup.
    * @param width Width of the popup.
    * @param max_height Max height of the popup.
-   * @param parent_window Pointer to original popup, if it is the original popup
-   * the pointer is nullptr.
+   * @param parent_window Smart pointer to the parent popup, if it is the
+   * original popup the pointer is nullptr.
    * @param button_height Height of each button, if don't passed any button.
    * height, then default height is choiced then use nullptr.
    *
@@ -80,7 +99,7 @@ public:
    * @throw Throw the std::runtime_error if the renderer can't be created.
    */
   PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
-            int offset_y, SDL_Window *parent_window = nullptr,
+            int offset_y, std::shared_ptr<PopupMenu> parent_popup = nullptr,
             int button_height = DEFAULT_BUTTON_HEIGHT);
 
   /*
