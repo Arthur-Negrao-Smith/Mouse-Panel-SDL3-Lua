@@ -6,7 +6,6 @@ File with util structures
 #define UTILS_PAANEL_SDL3_LUA
 
 #include <SDL3/SDL.h>
-#include <cstdint>
 #include <string>
 
 /*
@@ -33,6 +32,13 @@ File with util structures
  * @brief Constante to define default height of the popup menu
  */
 #define DEFAULT_HEIGHT_POPUP 400
+
+/*
+ * @brief Macro to keep default font
+ */
+#define DEFAULT_FONT_NAME "../src/Roboto-VariableFont_wdth,wght.ttf"
+
+#define DEFAULT_FONT_SIZE 18
 
 /*
  * @struct Position
