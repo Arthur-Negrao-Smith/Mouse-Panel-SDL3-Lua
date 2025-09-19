@@ -4,6 +4,7 @@ project(mouse_menu "CXX")
 set(CMAKE_CXX_STANDARD 23)
 
 find_package(SDL3 REQUIRED CONFIG)
+find_package(SDL3_ttf CONFIG REQUIRED)
 
 #
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
@@ -16,4 +17,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   src/ui
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3)
