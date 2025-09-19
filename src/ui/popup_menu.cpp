@@ -3,6 +3,9 @@
 #include "utils.hpp"
 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -31,19 +34,62 @@ void PopupMenu::calculate_buttons_position() {
       this->buttons.pop_back();
   }
 
+  this->current_height = this->buttons.size() * this->button_height;
+  SDL_SetWindowSize(this->current_window.get(), this->width,
+                    this->current_height);
+
   // calculate the buttons positions
   Position current_position{0, 0};
   for (const auto &btn : this->buttons) {
     btn->rect.x = current_position.x;
     btn->rect.y = current_position.y;
+    btn->rect.w = this->width;
+    btn->rect.h = this->button_height;
 
     current_position.y += button_height;
   }
 }
 
-bool PopupMenu::add_button(std::string label, Color font_color,
+void PopupMenu::generate_buttons_texture() {
+  for (const auto &btn : this->buttons) {
+
+    // Create a surface to text
+    std::unique_ptr<SDL_Surface, decltype(&SDL_DestroySurface)> text_surface(
+        TTF_RenderText_Blended(this->loaded_font.get(), btn->label.c_str(), 0,
+                               btn->font_color),
+        &SDL_DestroySurface);
+    if (!text_surface)
+      throw std::runtime_error("Erro to create a text surface to button");
+
+    // Create a texture to text
+    std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> text_texture(
+        SDL_CreateTextureFromSurface(this->renderer.get(), text_surface.get()),
+        &SDL_DestroyTexture);
+    if (!text_texture) {
+      throw std::runtime_error("Erro to create a text texture to button");
+    }
+
+    // get the size of the texture
+    SDL_GetTextureSize(text_texture.get(), &(btn->texture_rect.w),
+                       &(btn->texture_rect.h));
+
+    // to centralize the text
+    const float padding = 10.0f;
+
+    btn->texture_rect.x = btn->rect.x + padding;
+    btn->texture_rect.y =
+        btn->rect.y + (btn->rect.h / 2.0f) - (btn->texture_rect.h / 2.0f);
+
+    btn->texture = std::move(text_texture);
+    // customize the text shape
+    if (!SDL_SetTextureScaleMode(btn->texture.get(), SDL_SCALEMODE_LINEAR))
+      throw std::runtime_error("Erro to scale the texture of label");
+  }
+}
+
+bool PopupMenu::add_button(std::string label, SDL_Color text_color,
                            std::string function) {
-  auto btn = std::make_unique<Button>(label, font_color, function);
+  auto btn = std::make_unique<Button>(label, text_color, function);
 
   if (!btn) {
     std::cerr << "Erro: Erro to create a Button" << std::endl;
@@ -58,7 +104,39 @@ bool PopupMenu::add_button(std::string label, Color font_color,
   return true;
 }
 
-bool PopupMenu::render() {
+void PopupMenu::render_buttons(const SDL_Color &bg_color) {
+  // Fill the background of the button
+  SDL_SetRenderDrawColor(this->renderer.get(), bg_color.r, bg_color.g,
+                         bg_color.b, bg_color.a);
+
+  // Cleanup screen
+  SDL_RenderClear(this->renderer.get());
+
+  for (const auto &btn : this->buttons) {
+
+    // Paint button
+    SDL_RenderFillRect(this->renderer.get(), &(btn->rect));
+
+    // Paint label of the button
+    SDL_RenderTexture(this->renderer.get(), btn->texture.get(), nullptr,
+                      &(btn->texture_rect));
+
+    // Draw a line to separete buttons
+    SDL_SetRenderDrawColor(this->renderer.get(), 255, 255, 255, 255);
+    SDL_RenderLine(this->renderer.get(), btn->rect.x,
+                   btn->rect.y + btn->rect.h - 1, btn->rect.x + btn->rect.w,
+                   btn->rect.y + btn->rect.h - 1);
+
+    // Return to original color
+    SDL_SetRenderDrawColor(this->renderer.get(), bg_color.r, bg_color.g,
+                           bg_color.b, bg_color.a);
+  }
+
+  // Show the screen updated
+  SDL_RenderPresent(this->renderer.get());
+}
+
+bool PopupMenu::render(SDL_Color bg_color) {
   if (!this->current_window || !this->renderer) {
     std::cerr << "Erro: Window or Renderer don't exist." << std::endl;
     return false;
@@ -69,6 +147,7 @@ bool PopupMenu::render() {
 
     try {
       calculate_buttons_position();
+      generate_buttons_texture();
 
     } catch (std::runtime_error NoButtonsError) {
       std::cerr << "Erro: Don't have buttons to calculate they positions."
@@ -79,14 +158,18 @@ bool PopupMenu::render() {
     this->pre_rendered = true;
   }
 
+  render_buttons(bg_color);
+
   return true;
 }
 
-PopupMenu::PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
-                     int offset_y, std::shared_ptr<PopupMenu> parent_popup,
-                     int button_height)
-    : menu_position(menu_pos), width(width), max_height(max_height),
-      parent_window(parent_popup), button_height(button_height),
+PopupMenu::PopupMenu(Position menu_pos, int width,
+                     std::shared_ptr<TTF_Font> font, int max_height,
+                     int offset_x, int offset_y,
+                     std::shared_ptr<PopupMenu> parent_popup, int button_height)
+    : menu_position(menu_pos), width(width), loaded_font(font),
+      max_height(max_height), parent_window(parent_popup),
+      button_height(button_height),
       // init the renderer like a nullptr
       renderer(nullptr, &SDL_DestroyRenderer) {
 

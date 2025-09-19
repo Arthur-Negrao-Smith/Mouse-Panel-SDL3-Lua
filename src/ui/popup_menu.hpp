@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_render.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <memory>
 #include <vector>
 
@@ -27,8 +27,11 @@ private:
   bool pre_rendered =
       false; ///< Variable to avoid recalculate buttons positions
 
+  std::shared_ptr<TTF_Font> loaded_font; ///< Font of the sdl
+
   /*
-   * @brief Calculate the current height of the window using the button height
+   * @brief Calculate the current height of the window using the button
+   * height
    */
   void calculate_current_height();
 
@@ -38,6 +41,10 @@ private:
    * @throw Throw the std::runtime_error if the window don't have buttons
    */
   void calculate_buttons_position();
+
+  void generate_buttons_texture();
+
+  void render_buttons(const SDL_Color &bg_color);
 
 public:
   /*
@@ -69,25 +76,27 @@ public:
    * @brief Add a button to popup
    *
    * @param label Label to show on button
-   * @param font_color Color of the label's font
-   * @param functino Name of the lua function of the button
+   * @param text_color Color of the label's text
+   * @param function Name of the lua function of the button
    *
    * @return Return true if was success, else, return false
    */
-  bool add_button(std::string label, Color font_color, std::string function);
+  bool add_button(std::string label, SDL_Color text_color,
+                  std::string function);
 
   /*
    * @brief Render all elements of the popup
    *
    * @return Return true if was success, else, return false
    */
-  bool render();
+  bool render(SDL_Color bg_color = {0, 0, 0, 255});
 
   /*
    * @brief Constructor from PopupMenu.
    *
    * @param menu_pos Position of the popup.
    * @param width Width of the popup.
+   * @param font Font to show buttos label
    * @param max_height Max height of the popup.
    * @param parent_window Smart pointer to the parent popup, if it is the
    * original popup the pointer is nullptr.
@@ -98,8 +107,9 @@ public:
    * @throw Throw the std::runtime_error if the window can't be created.
    * @throw Throw the std::runtime_error if the renderer can't be created.
    */
-  PopupMenu(Position menu_pos, int width, int max_height, int offset_x,
-            int offset_y, std::shared_ptr<PopupMenu> parent_popup = nullptr,
+  PopupMenu(Position menu_pos, int width, std::shared_ptr<TTF_Font> font,
+            int max_height = DEFAULT_HEIGHT_POPUP, int offset_x = 0,
+            int offset_y = 0, std::shared_ptr<PopupMenu> parent_popup = nullptr,
             int button_height = DEFAULT_BUTTON_HEIGHT);
 
   /*
