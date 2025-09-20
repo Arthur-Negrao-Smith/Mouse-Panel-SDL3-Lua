@@ -23,6 +23,12 @@ File with util structures
  */
 #define DEFAULT_BUTTON_HEIGHT 30
 
+#define DEFAULT_BUTTON_COLOR {40, 40, 40, 255}
+
+#define DEFAULT_FOCUSED_BUTTON_COLOR {100, 100, 100, 255}
+
+#define DEFAULT_CLICKED_BUTTON_COLOR {255, 255, 255, 255}
+
 /*
  * @brief Constant to define default width of the popup menu
  */

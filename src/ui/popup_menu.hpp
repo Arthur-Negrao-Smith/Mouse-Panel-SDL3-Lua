@@ -24,6 +24,7 @@ private:
   const int width;      ///< Const with the width of the window
   const int button_height;
   int current_height; ///< Variable to keep the current menu height
+
   bool pre_rendered =
       false; ///< Variable to avoid recalculate buttons positions
 
@@ -42,9 +43,18 @@ private:
    */
   void calculate_buttons_position();
 
+  /*
+   * @brief Generate textures to put labels on buttons
+   */
   void generate_buttons_texture();
 
-  void render_buttons(const SDL_Color &bg_color);
+  /*
+   * @brief Render all buttons
+   */
+  void render_buttons(const SDL_Color &default_button_color,
+                      const SDL_Color &focused_button_color,
+                      const SDL_Color &clicked_button_color,
+                      const Position &mouse_position);
 
 public:
   /*
@@ -89,7 +99,11 @@ public:
    *
    * @return Return true if was success, else, return false
    */
-  bool render(SDL_Color bg_color = {0, 0, 0, 255});
+  bool
+  render(const Position &mouse_position = {0, 0},
+         const SDL_Color &default_button_color = DEFAULT_BUTTON_COLOR,
+         const SDL_Color &focused_button_color = DEFAULT_FOCUSED_BUTTON_COLOR,
+         const SDL_Color &clicked_button_color = DEFAULT_CLICKED_BUTTON_COLOR);
 
   /*
    * @brief Constructor from PopupMenu.

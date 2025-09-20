@@ -3,8 +3,6 @@
 #include "utils.hpp"
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_render.h>
-#include <SDL3/SDL_surface.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
 #include <memory>
@@ -104,15 +102,30 @@ bool PopupMenu::add_button(std::string label, SDL_Color text_color,
   return true;
 }
 
-void PopupMenu::render_buttons(const SDL_Color &bg_color) {
+void PopupMenu::render_buttons(const SDL_Color &default_button_color,
+                               const SDL_Color &focused_button_color,
+                               const SDL_Color &clicked_button_color,
+                               const Position &mouse_position) {
   // Fill the background of the button
-  SDL_SetRenderDrawColor(this->renderer.get(), bg_color.r, bg_color.g,
-                         bg_color.b, bg_color.a);
+  SDL_SetRenderDrawColor(this->renderer.get(), default_button_color.r,
+                         default_button_color.g, default_button_color.b,
+                         default_button_color.a);
 
   // Cleanup screen
   SDL_RenderClear(this->renderer.get());
 
   for (const auto &btn : this->buttons) {
+
+    // Select current color
+    if (btn->is_focused(mouse_position)) {
+      SDL_SetRenderDrawColor(this->renderer.get(), focused_button_color.r,
+                             focused_button_color.g, focused_button_color.b,
+                             focused_button_color.a);
+    } else {
+      SDL_SetRenderDrawColor(this->renderer.get(), default_button_color.r,
+                             default_button_color.g, default_button_color.b,
+                             default_button_color.a);
+    }
 
     // Paint button
     SDL_RenderFillRect(this->renderer.get(), &(btn->rect));
@@ -126,17 +139,16 @@ void PopupMenu::render_buttons(const SDL_Color &bg_color) {
     SDL_RenderLine(this->renderer.get(), btn->rect.x,
                    btn->rect.y + btn->rect.h - 1, btn->rect.x + btn->rect.w,
                    btn->rect.y + btn->rect.h - 1);
-
-    // Return to original color
-    SDL_SetRenderDrawColor(this->renderer.get(), bg_color.r, bg_color.g,
-                           bg_color.b, bg_color.a);
   }
 
   // Show the screen updated
   SDL_RenderPresent(this->renderer.get());
 }
 
-bool PopupMenu::render(SDL_Color bg_color) {
+bool PopupMenu::render(const Position &mouse_position,
+                       const SDL_Color &default_button_color,
+                       const SDL_Color &focused_button_color,
+                       const SDL_Color &clicked_button_color) {
   if (!this->current_window || !this->renderer) {
     std::cerr << "Erro: Window or Renderer don't exist." << std::endl;
     return false;
@@ -158,7 +170,8 @@ bool PopupMenu::render(SDL_Color bg_color) {
     this->pre_rendered = true;
   }
 
-  render_buttons(bg_color);
+  render_buttons(default_button_color, focused_button_color,
+                 clicked_button_color, mouse_position);
 
   return true;
 }
