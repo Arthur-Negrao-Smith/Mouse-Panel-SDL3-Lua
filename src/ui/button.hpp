@@ -1,6 +1,8 @@
 #ifndef BUTTON_PANEL_SDL3_LUA
 #define BUTTON_PANEL_SDL3_LUA
 
+#include "utils.hpp"
+
 #include <SDL3/SDL.h>
 #include <memory>
 #include <string>
@@ -20,6 +22,15 @@ struct Button {
   float text_width = 0.0f;
   float text_height = 0.0f;
   SDL_FRect texture_rect;
+
+  /*
+   * @brief Check mouse position in button
+   *
+   * @param mouse_position Position of the mouse
+   *
+   * @return Returns true if mouse is in button, else returns false
+   */
+  bool is_focused(const Position &mouse_position);
 
   /*
    * @brief Add a button to popup
