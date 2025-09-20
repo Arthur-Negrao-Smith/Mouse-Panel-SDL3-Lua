@@ -197,13 +197,14 @@ PopupMenu::PopupMenu(Position menu_pos, int width,
   if (parent_popup == nullptr) {
     temp_window =
         SDL_CreateWindow(APP_NAME, this->width, this->max_height,
-                         SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALWAYS_ON_TOP);
+                         SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALWAYS_ON_TOP |
+                             SDL_WINDOW_KEYBOARD_GRABBED | SDL_WINDOW_UTILITY);
   } else {
-    temp_window =
-        SDL_CreatePopupWindow(parent_popup->current_window.get(), offset_x,
-                              offset_y, this->width, this->max_height,
-                              SDL_WINDOW_BORDERLESS | SDL_WINDOW_POPUP_MENU |
-                                  SDL_WINDOW_ALWAYS_ON_TOP);
+    temp_window = SDL_CreatePopupWindow(
+        parent_popup->current_window.get(), offset_x, offset_y, this->width,
+        this->max_height,
+        SDL_WINDOW_BORDERLESS | SDL_WINDOW_POPUP_MENU |
+            SDL_WINDOW_ALWAYS_ON_TOP | SDL_WINDOW_KEYBOARD_GRABBED);
   }
 
   if (!temp_window) {
