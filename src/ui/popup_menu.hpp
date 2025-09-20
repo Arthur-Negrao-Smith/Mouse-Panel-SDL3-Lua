@@ -91,8 +91,8 @@ public:
    *
    * @return Return true if was success, else, return false
    */
-  bool add_button(std::string label, SDL_Color text_color,
-                  std::string function);
+  bool add_button(const std::string &label, const std::string &text_color,
+                  const std::string &function);
 
   /*
    * @brief Render all elements of the popup

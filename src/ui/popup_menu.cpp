@@ -85,9 +85,11 @@ void PopupMenu::generate_buttons_texture() {
   }
 }
 
-bool PopupMenu::add_button(std::string label, SDL_Color text_color,
-                           std::string function) {
-  auto btn = std::make_unique<Button>(label, text_color, function);
+bool PopupMenu::add_button(const std::string &label,
+                           const std::string &text_color,
+                           const std::string &function) {
+  auto btn = std::make_unique<Button>(
+      label, ColorUtils::hex_to_color(text_color), function);
 
   if (!btn) {
     std::cerr << "Erro: Erro to create a Button" << std::endl;
