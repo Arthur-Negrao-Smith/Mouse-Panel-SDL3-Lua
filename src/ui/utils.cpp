@@ -2,11 +2,13 @@
 
 #include <SDL3/SDL.h>
 #include <cstdint>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
-SDL_Color ColorUtils::hex_to_color(const std::string &hex) {
+namespace ColorUtils {
+SDL_Color hex_to_color(const std::string &hex) {
   // if isn't "#RRGGBB" or "#RRGGBBAA"
   if (hex.size() != 7 && hex.size() != 9) {
     throw std::invalid_argument(
@@ -33,9 +35,14 @@ SDL_Color ColorUtils::hex_to_color(const std::string &hex) {
   return {r, g, b, alpha};
 }
 
-std::string ColorUtils::color_to_hex(const SDL_Color &color) {
+std::string color_to_hex(const SDL_Color &color) {
   std::stringstream temp_color;
-  temp_color << '#' << color.r << color.g << color.b << color.a;
+  temp_color << '#' << std::hex << std::setfill('0') << std::setw(2)
+             << static_cast<int>(color.r) << std::setw(2)
+             << static_cast<int>(color.g) << std::setw(2)
+             << static_cast<int>(color.b) << std::setw(2)
+             << static_cast<int>(color.a);
 
   return temp_color.str();
 }
+} // namespace ColorUtils

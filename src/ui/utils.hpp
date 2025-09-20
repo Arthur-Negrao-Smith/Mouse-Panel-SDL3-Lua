@@ -67,33 +67,32 @@ struct Geometry {
 };
 
 /*
- * @class ColorUtils
+ * @namespace ColorUtils
  *
  * @brief Utilities to use colors
  */
-class ColorUtils {
-public:
-  /*
-   * @brief Convert hexadecimal values to color
-   *
-   * @param hex String with hexadecimal to convert
-   *
-   * @return The respective Color
-   *
-   * @throw std::invalid_argument if size of hexadecimal is invalid
-   * @throw std::invalid_argument if the first element isn't "#"
-   * @throw std::out_of_range if number is to big hexadecimal
-   */
-  static SDL_Color hex_to_color(const std::string &hex);
+namespace ColorUtils {
+/*
+ * @brief Convert hexadecimal values to color
+ *
+ * @param hex String with hexadecimal to convert
+ *
+ * @return The respective Color
+ *
+ * @throw std::invalid_argument if size of hexadecimal is invalid
+ * @throw std::invalid_argument if the first element isn't "#"
+ * @throw std::out_of_range if number is to big hexadecimal
+ */
+SDL_Color hex_to_color(const std::string &hex);
 
-  /*
-   * @brief Convert Color to string
-   *
-   * @param color Color to convert to a string
-   *
-   * @return The respective string
-   */
-  static std::string color_to_hex(const SDL_Color &color);
-};
+/*
+ * @brief Convert Color to string
+ *
+ * @param color Color to convert to a string
+ *
+ * @return The respective string
+ */
+std::string color_to_hex(const SDL_Color &color);
+}; // namespace ColorUtils
 
 #endif
