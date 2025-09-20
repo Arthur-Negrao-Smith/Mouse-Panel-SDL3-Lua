@@ -120,9 +120,19 @@ void PopupMenu::render_buttons(const SDL_Color &default_button_color,
 
     // Select current color
     if (btn->is_focused(mouse_position)) {
-      SDL_SetRenderDrawColor(this->renderer.get(), focused_button_color.r,
-                             focused_button_color.g, focused_button_color.b,
-                             focused_button_color.a);
+
+      // if a click occurs
+      if (this->clicked) {
+        SDL_SetRenderDrawColor(this->renderer.get(), clicked_button_color.r,
+                               clicked_button_color.g, clicked_button_color.b,
+                               clicked_button_color.a);
+        this->clicked = false;
+      } else {
+
+        SDL_SetRenderDrawColor(this->renderer.get(), focused_button_color.r,
+                               focused_button_color.g, focused_button_color.b,
+                               focused_button_color.a);
+      }
     } else {
       SDL_SetRenderDrawColor(this->renderer.get(), default_button_color.r,
                              default_button_color.g, default_button_color.b,
@@ -146,6 +156,8 @@ void PopupMenu::render_buttons(const SDL_Color &default_button_color,
   // Show the screen updated
   SDL_RenderPresent(this->renderer.get());
 }
+
+void PopupMenu::click() { this->clicked = true; }
 
 bool PopupMenu::render(const Position &mouse_position,
                        const SDL_Color &default_button_color,

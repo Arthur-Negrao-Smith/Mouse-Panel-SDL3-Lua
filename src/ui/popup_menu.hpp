@@ -28,6 +28,8 @@ private:
   bool pre_rendered =
       false; ///< Variable to avoid recalculate buttons positions
 
+  bool clicked = false; ///< Variable to identify a click event
+
   std::shared_ptr<TTF_Font> loaded_font; ///< Font of the sdl
 
   /*
@@ -93,6 +95,11 @@ public:
    */
   bool add_button(const std::string &label, const std::string &text_color,
                   const std::string &function);
+
+  /*
+   * @brief Send an event click
+   */
+  void click();
 
   /*
    * @brief Render all elements of the popup
