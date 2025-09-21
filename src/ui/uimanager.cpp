@@ -18,10 +18,11 @@ Geometry UIManager::get_resolution() {
   return res;
 }
 
-UIManager::UIManager(Color menu_bg, Color btn_hover, Color btn_focused,
-                     Color btn_default)
-    : menu_bg(menu_bg), btn_hover(btn_hover), btn_focused(btn_focused),
-      btn_default(btn_default) {
+UIManager::UIManager(const std::string &btn_default_color,
+                     const std::string &btn_hover_color,
+                     const std::string &btn_focused_color)
+    : btn_hover_color(btn_hover_color), btn_focused_color(btn_focused_color),
+      btn_default_color(btn_default_color) {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     std::cerr << "Erro: Erro to iniate the SDL" << std::endl;
     exit(EXIT_FAILURE);

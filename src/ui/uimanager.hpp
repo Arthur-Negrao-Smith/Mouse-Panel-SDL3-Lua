@@ -6,6 +6,7 @@
 
 #include <SDL3/SDL.h>
 #include <memory>
+#include <string>
 
 class UIManager {
 private:
@@ -17,10 +18,9 @@ private:
    */
   Geometry get_resolution();
 
-  const Color menu_bg;
-  const Color btn_hover;
-  const Color btn_focused;
-  const Color btn_default;
+  const std::string btn_hover_color;
+  const std::string btn_focused_color;
+  const std::string btn_default_color;
 
 public:
   /**
@@ -39,8 +39,9 @@ public:
   /**
    * @brief Constructor from UIManager
    */
-  UIManager(Color menu_bg, Color btn_hover, Color btn_focused,
-            Color btn_default);
+  UIManager(const std::string &btn_default_color,
+            const std::string &btn_hover_color,
+            const std::string &btn_focused_color);
 
   /**
    * @brief Destructor from UIManager
